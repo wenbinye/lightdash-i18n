@@ -63,7 +63,7 @@ jobs:
                   push: ${{ github.event_name != 'pull_request' }}
                   labels: ${{ steps.meta.outputs.labels }}
                   platforms: ${{ matrix.platform }}
-                  tags: ${{ env.ALIYUN_REGISTRY }}/${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+                  tags: ${{ env.ALIYUN_REGISTRY }}/${{ env.REGISTRY_IMAGE }}:${{ github.ref_name }}
 
             - name: Export digest
               run: |
