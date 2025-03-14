@@ -35,7 +35,7 @@ jobs:
               id: meta
               uses: docker/metadata-action@v5
               with:
-                  images: ${{ env.REGISTRY_IMAGE }}
+                  images: ${{ env.ALIYUN_REGISTRY }}/${{ env.REGISTRY_IMAGE }}
                   tags: |
                       type=semver,pattern={{version}}
 
@@ -60,24 +60,10 @@ jobs:
               uses: docker/build-push-action@v5
               with:
                   file: dockerfile
-                  push: ${{ github.event_name != 'pull_request' }}
+                  push: true
                   labels: ${{ steps.meta.outputs.labels }}
-                  platforms: ${{ matrix.platform }}
-                  tags: ${{ env.ALIYUN_REGISTRY }}/${{ env.REGISTRY_IMAGE }}:${{ github.ref_name }}
+                  tags: ${{ env.ALIYUN_REGISTRY }}/${{ env.REGISTRY_IMAGE }}:github-action-test-${{ github.ref_name }}
 
-            - name: Export digest
-              run: |
-                  mkdir -p /tmp/digests
-                  digest="${{ steps.build.outputs.digest }}"
-                  touch "/tmp/digests/${digest#sha256:}"
-
-            - name: Upload digest
-              uses: actions/upload-artifact@v4
-              with:
-                  name: digests-${{ env.PLATFORM_PAIR }}
-                  path: /tmp/digests/*
-                  if-no-files-found: error
-                  retention-days: 1
 
     # # This step "merges" multiple images for various architectures into a single image
     # docker-merge:
